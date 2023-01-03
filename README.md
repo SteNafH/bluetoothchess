@@ -2,7 +2,7 @@
 <br />
 <div align="center">
   <a href="https://gitlab.com/SteNaf/bluetoothchess">
-    <img src="designs/logo.png" alt="Logo" width="80">
+    <img src="images/logo.png" alt="Logo" width="80">
   </a>
 
 <h3 align="center">Bluetooth Chess</h3>
@@ -67,11 +67,11 @@ for some time. Below you will be able to see the designs for the app. The design
 
 ### Device List
 
-<img src="designs/device-list.png" alt="" width="200"/>
+<img src="images/device-list.png" alt="" width="200"/>
 
 ### Gameplay
 
-<img src="designs/game.png" alt="" width="200"/>
+<img src="images/game.png" alt="" width="200"/>
 
 <!-- ROADMAP -->
 
