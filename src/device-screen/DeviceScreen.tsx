@@ -27,10 +27,8 @@ export default class DeviceScreen extends React.Component<Props, State> {
     private disconnectSubscription?: BluetoothEventSubscription;
     private readSubscription?: BluetoothEventSubscription;
 
-    constructor(props: Props) {
+    public constructor(props: Props) {
         super(props);
-        // {"address": "60:AB:67:38:4C:7B", "bonded": true, "extra": {}, "id": "60:AB:67:38:4C:7B", "name": "Redmi van Stefan"}
-        // Module is RNBluetoothClassic
 
         this.state = {
             text: undefined,
@@ -39,7 +37,7 @@ export default class DeviceScreen extends React.Component<Props, State> {
         };
     }
 
-    async componentWillUnmount(): Promise<void> {
+    public async componentWillUnmount(): Promise<void> {
         if (this.state.connection) {
             try {
                 await this.props.device.disconnect();
@@ -52,12 +50,12 @@ export default class DeviceScreen extends React.Component<Props, State> {
         BackHandler.removeEventListener('hardwareBackPress', this.props.onBack);
     }
 
-    async componentDidMount() {
+    public async componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.props.onBack);
         await this.connect();
     }
 
-    async connect(): Promise<void> {
+    private async connect(): Promise<void> {
         try {
             let connection = await this.props.device.isConnected();
 
@@ -94,7 +92,7 @@ export default class DeviceScreen extends React.Component<Props, State> {
         }
     }
 
-    async disconnect(disconnected: boolean): Promise<void> {
+    private async disconnect(disconnected: boolean): Promise<void> {
         try {
             if (!disconnected) {
                 disconnected = await this.props.device.disconnect();
@@ -119,18 +117,18 @@ export default class DeviceScreen extends React.Component<Props, State> {
         this.uninitializeRead();
     }
 
-    initializeRead(): void {
+    private initializeRead(): void {
         this.disconnectSubscription = RNBluetoothClassic.onDeviceDisconnected(() => this.disconnect(true));
         this.readSubscription = this.props.device.onDataReceived((data: BluetoothDeviceReadEvent) => this.onReceivedData(data));
     }
 
-    uninitializeRead(): void {
+    private uninitializeRead(): void {
         if (this.readSubscription) {
             this.readSubscription.remove();
         }
     }
 
-    async onReceivedData(event: BluetoothDeviceReadEvent) {
+    private async onReceivedData(event: BluetoothDeviceReadEvent) {
         console.log(event.data);
 
         await this.addData({
@@ -140,11 +138,11 @@ export default class DeviceScreen extends React.Component<Props, State> {
         });
     }
 
-    async addData(message: Message) {
+    private async addData(message: Message) {
         this.setState({ data: [message, ...this.state.data] });
     }
 
-    async sendData() {
+    private async sendData() {
         try {
             let message = this.state.text + '\r';
             console.log(message);
@@ -163,7 +161,7 @@ export default class DeviceScreen extends React.Component<Props, State> {
         }
     }
 
-    async toggleConnection() {
+    private async toggleConnection() {
         if (this.state.connection) {
             await this.disconnect(false);
         } else {
@@ -171,7 +169,7 @@ export default class DeviceScreen extends React.Component<Props, State> {
         }
     }
 
-    render() {
+    public render() {
         return (
             <View style={styles.connectionScreenWrapper}>
                 <FlatList

@@ -17,22 +17,22 @@ export default class App extends React.Component<Props, State> {
     private enabledSubscription?: BluetoothEventSubscription;
     private disabledSubscription?: BluetoothEventSubscription;
 
-    constructor(props: Props) {
+    public constructor(props: Props) {
         super(props);
 
         this.state = { bluetoothEnabled: true, device: undefined };
     }
 
-    selectDevice = (device: BluetoothDevice): void => {
+    private selectDevice = (device: BluetoothDevice): void => {
         this.setState({ device: device });
     }
 
-    removeDevice = (): boolean => {
+    private removeDevice = (): boolean => {
         this.setState({ device: undefined });
         return true;
     }
 
-    async componentDidMount() {
+    public async componentDidMount() {
         // console.log('App::componentDidMount adding listeners: onBluetoothEnabled and onBluetoothDisabled');
         // console.log('App::componentDidMount alternatively could use onStateChanged');
         this.enabledSubscription = RNBluetoothClassic.onBluetoothEnabled(event => this.onStateChanged(event));
@@ -41,7 +41,7 @@ export default class App extends React.Component<Props, State> {
         this.disabledSubscription = RNBluetoothClassic.onBluetoothDisabled(event => this.onStateChanged(event));
     }
 
-    async checkBluetoothEnabled(): Promise<void> {
+    public async checkBluetoothEnabled(): Promise<void> {
         try {
             // console.log('App::componentDidMount Checking bluetooth status');
             let enabled: boolean = await RNBluetoothClassic.isBluetoothEnabled();
@@ -54,13 +54,13 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    onStateChanged(stateChangedEvent: any) {
+    private onStateChanged(stateChangedEvent: any) {
         // console.log('App::onStateChanged event used for onBluetoothEnabled and onBluetoothDisabled');
 
         this.setState({ bluetoothEnabled: stateChangedEvent.enabled });
     }
 
-    render() {
+    public render() {
         return (
             <View className={'flex-1'}>
                 {!this.state.device ? (

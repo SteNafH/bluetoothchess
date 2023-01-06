@@ -19,14 +19,14 @@
 
 Still in development!!!
 
-Airplane rides can be quite boring and I always wanted to play games with my family/friends. That is why I started this
-project, you cannot use wifi in an airplane (Or it is very bad/expensive). So here is the solution to that problem. I
+Airplane rides can be quite boring, and I always wanted to play games with my family/friends. That is why I started this
+project, you cannot use Wi-Fi in an airplane (Or it is very bad/expensive). So here is the solution to that problem. I
 created an app in which you can play Chess via Bluetooth.
 
 I also believe it is very important to learn new things with each project you start. So this was the first time for me
 to work with TypeScript and TailwindCSS.
 
-The designs are based on the Chess.com app and this project is only possible due to the 'react-native-bluetooth-classic'
+The designs are based on the Chess.com app and this project is only possible thanks to the 'react-native-bluetooth-classic'
 library.
 
 ### Built With
@@ -79,7 +79,7 @@ for some time. Below you will be able to see the designs for the app. The design
 
 - [x] Connect to device via Bluetooth
 - [x] Send/Receive messages via Bluetooth
-- [ ] Chess notation interpreter
+- [x] Chess Algebraic notation interpreter
 - [ ] Chess logic
     - [ ] Generate moves
     - [ ] Check for check
