@@ -32,6 +32,8 @@ export const Col: { [key: string]: number } = {
 
 export default class MoveParser {
     public static getPiece(move: string): typeof Piece | 'O' | undefined {
+        //first letter is always the piece that moved, if no piece is specified than it is a Pawn
+        //Ra4 -> R -> Rook || d4 -> '' -> Pawn || O-O-O -> O -> Castling
         let pieceLetter: string = move[0];
 
         if (!pieceLetter)
@@ -56,7 +58,7 @@ export default class MoveParser {
     }
 
     public static getNewPosition(move: string): Position {
-        //remove everything from string apart from coordinates, get last 2 characters those are the newposition
+        //remove everything from string apart from coordinates, get last 2 characters those are the new position coordinates
         //Ra4xb5 -> a4b5 -> b5
         let newPosition: string = move.replace(new RegExp(/[^a-h^1-8]+/g), '').slice(-2);
         return new Position(Row[newPosition[1]], Col[newPosition[0]]);
@@ -78,7 +80,7 @@ export default class MoveParser {
     }
 
     public static getExtraMoveData(move: string): { row?: number; col?: number; } {
-        //remove everything from string apart from coordinates, remove last 2 characters those are the newposition
+        //remove everything from string apart from coordinates, remove last 2 characters those are the new position coordinates
         //Ra4xb5 -> a4b5 -> a4
         let extraData = move.replace(new RegExp(/[^a-h^1-8]+/g), '').slice(0, -2);
 

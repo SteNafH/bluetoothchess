@@ -26,8 +26,8 @@ created an app in which you can play Chess via Bluetooth.
 I also believe it is very important to learn new things with each project you start. So this was the first time for me
 to work with TypeScript and TailwindCSS.
 
-The designs are based on the Chess.com app and this project is only possible thanks to the 'react-native-bluetooth-classic'
-library.
+The designs are based on the Chess.com app and this project is only possible thanks to the '
+react-native-bluetooth-classic' library.
 
 ### Built With
 
@@ -77,13 +77,16 @@ for some time. Below you will be able to see the designs for the app. The design
 
 ## Roadmap
 
-- [x] Connect to device via Bluetooth
-- [x] Send/Receive messages via Bluetooth
-- [x] Chess Algebraic notation interpreter
-- [ ] Chess logic
-    - [ ] Generate moves
-    - [ ] Check for check
-    - [ ] Check for game end (win/loss/stalemate)
+- [x] Bluetooth
+    - [x] Connect to device via Bluetooth
+    - [x] Send/Receive messages via Bluetooth
+- [ ] Chess
+    - [x] Chess Algebraic notation interpreter
+        - [x] Turn string into Move object
+    - [ ] Chess logic
+        - [ ] Generate moves
+        - [ ] Check for check
+        - [ ] Check for game end (win/loss/stalemate)
 
 <!-- ACKNOWLEDGMENTS -->
 

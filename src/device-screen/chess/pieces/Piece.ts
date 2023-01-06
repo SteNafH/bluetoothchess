@@ -13,10 +13,6 @@ export default abstract class Piece {
         this.white = white;
     }
 
-    public get getPieceLetter() {
-        return ' ';
-    }
-
     protected isOutOfBounds(row: number, col: number): boolean {
         return row < 0 || col < 0 || row > 7 || col > 7;
     }
@@ -52,6 +48,8 @@ export default abstract class Piece {
 
         return possiblePositions;
     }
+
+    public abstract get getPieceLetter(): string;
 
     public abstract getLegalMoves(board: ChessBoard): Position[];
 
