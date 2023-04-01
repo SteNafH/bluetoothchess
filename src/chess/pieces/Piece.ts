@@ -1,5 +1,13 @@
 import { ChessBoard } from '../Board';
 import Position from '../Position';
+import Pawn from './Pawn';
+import Knight from './Knight';
+import Bishop from './Bishop';
+import Rook from './Rook';
+import Queen from './Queen';
+import King from './King';
+
+export type PieceType = typeof Pawn | typeof Knight | typeof Bishop | typeof Rook | typeof Queen | typeof King;
 
 export default abstract class Piece {
     public white: boolean;

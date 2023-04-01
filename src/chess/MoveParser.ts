@@ -1,12 +1,14 @@
 import Position from './Position';
 import MoveTypes from './MoveTypes';
-import Piece from './pieces/Piece';
+import { PieceType } from './pieces/Piece';
 import Queen from './pieces/Queen';
 import Bishop from './pieces/Bishop';
 import King from './pieces/King';
 import Knight from './pieces/Knight';
 import Pawn from './pieces/Pawn';
 import Rook from './pieces/Rook';
+import { ChessBoard } from './Board';
+import Move from './Move';
 
 export const Row: { [key: string]: number } = {
     1: 0,
@@ -31,7 +33,63 @@ export const Col: { [key: string]: number } = {
 };
 
 export default class MoveParser {
-    public static getPiece(move: string): typeof Piece | 'O' | undefined {
+    public static getMoveFromAN(board: ChessBoard, white: boolean, move: string): Move | undefined {
+        if (!move)
+            return undefined;
+
+        let pieceName: PieceType | 'O' | undefined = MoveParser.getPiece(move);
+
+        if (pieceName === undefined)
+            return undefined;
+
+        let type: MoveTypes = MoveParser.getType(move);
+
+        let newPosition: Position;
+        let prevPosition: Position;
+
+        if (pieceName === 'O') {
+            let row = white ? 0 : 7;
+
+            if (move === 'O-O-O') {
+                newPosition = new Position(row, 2);
+            } else {
+                newPosition = new Position(row, 6);
+            }
+
+            prevPosition = new Position(row, 4);
+        } else {
+            newPosition = MoveParser.getNewPosition(move);
+            let piece = new pieceName(newPosition.row, newPosition.col, white);
+            let previousPositions: Position[] = piece.getPreviousPositions(board, type === MoveTypes.Capture);
+
+            if (previousPositions.length > 0 && type === MoveTypes.Capture && piece instanceof Pawn && piece.isMoveEnPassant(board))
+                type = MoveTypes.EnPassant;
+
+            if (previousPositions.length === 0)
+                return undefined;
+            else if (previousPositions.length === 1)
+                prevPosition = previousPositions[0];
+            else {
+                let extraData: { row?: number; col?: number } = MoveParser.getExtraMoveData(move);
+
+                if (extraData.col !== undefined && extraData.row !== undefined)
+                    previousPositions = previousPositions.filter((position: Position) => position.row === extraData.row && position.col === extraData.col);
+                else if (extraData.col !== undefined)
+                    previousPositions = previousPositions.filter((position: Position) => position.col === extraData.col);
+                else if (extraData.row !== undefined)
+                    previousPositions = previousPositions.filter((position: Position) => position.row === extraData.row);
+
+                prevPosition = previousPositions[0];
+            }
+        }
+
+        if (type === MoveTypes.Promote)
+            return new Move(prevPosition, newPosition, type, MoveParser.getPromotionPiece(move));
+
+        return new Move(prevPosition, newPosition, type);
+    }
+
+    public static getPiece(move: string): PieceType | 'O' | undefined {
         //first letter is always the piece that moved, if no piece is specified than it is a Pawn
         //Ra4 -> R -> Rook || d4 -> '' -> Pawn || O-O-O -> O -> Castling
         let pieceLetter: string = move[0];
@@ -95,7 +153,7 @@ export default class MoveParser {
         return {};
     }
 
-    public static getPromotionPiece(move: string): typeof Piece | undefined {
+    public static getPromotionPiece(move: string): PieceType | undefined {
         //promotion piece is always at the end of move
         //e8=Q -> Q
         switch (move[move.length - 1]) {

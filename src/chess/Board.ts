@@ -7,6 +7,7 @@ import Rook from './pieces/Rook';
 import Pawn from './pieces/Pawn';
 import Move from './Move';
 import MoveTypes from './MoveTypes';
+import MoveParser from './MoveParser';
 
 export type ChessBoard = (Piece | null)[][];
 
@@ -83,8 +84,8 @@ export default class Board {
                 black: move[1],
             });
 
-            this.makeMove(Move.getMoveFromAN(this.board, true, move[0]));
-            this.makeMove(Move.getMoveFromAN(this.board, false, move[1]));
+            this.makeMove(MoveParser.getMoveFromAN(this.board, true, move[0]));
+            this.makeMove(MoveParser.getMoveFromAN(this.board, false, move[1]));
         }
     }
 

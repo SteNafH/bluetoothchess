@@ -1,19 +1,22 @@
 {
-  "name": "MyApp",
+  "name": "bluetoothchess",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "test": "jest"
   },
   "dependencies": {
+    "@react-navigation/native": "^6.1.6",
+    "@react-navigation/native-stack": "^6.9.12",
     "nativewind": "^2.0.11",
     "react": "18.1.0",
     "react-native": "0.70.6",
-    "react-native-bluetooth-classic": "^1.60.0-rc.24"
+    "react-native-bluetooth-classic": "^1.60.0-rc.25",
+    "react-native-safe-area-context": "^4.5.0",
+    "react-native-screens": "^3.20.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -27,7 +30,6 @@
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
     "babel-jest": "^26.6.3",
-    "eslint": "^7.32.0",
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "0.72.3",
     "react-test-renderer": "18.1.0",

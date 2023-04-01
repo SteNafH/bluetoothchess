@@ -1,12 +1,12 @@
-import Board from '../src/device-screen/chess/Board';
-import Move from '../src/device-screen/chess/Move';
-import Position from '../src/device-screen/chess/Position';
-import MoveTypes from '../src/device-screen/chess/MoveTypes';
-import MoveParser from '../src/device-screen/chess/MoveParser';
-import Rook from '../src/device-screen/chess/pieces/Rook';
-import Pawn from '../src/device-screen/chess/pieces/Pawn';
-import Queen from '../src/device-screen/chess/pieces/Queen';
-import Knight from '../src/device-screen/chess/pieces/Knight';
+import Board from '../src/chess/Board';
+import Move from '../src/chess/Move';
+import Position from '../src/chess/Position';
+import MoveTypes from '../src/chess/MoveTypes';
+import MoveParser from '../src/chess/MoveParser';
+import Rook from '../src/chess/pieces/Rook';
+import Pawn from '../src/chess/pieces/Pawn';
+import Queen from '../src/chess/pieces/Queen';
+import Knight from '../src/chess/pieces/Knight';
 
 describe('Chess', () => {
     describe('MoveParser', () => {
@@ -78,7 +78,7 @@ describe('Chess', () => {
     describe('Move', () => {
         it('given a correct Algebraic notated chess move, Move.getMoveFromAN returns a correct Move object', () => {
             let board = new Board();
-            expect(Move.getMoveFromAN(board.board, true, 'd4')).toStrictEqual(new Move(new Position(1, 3), new Position(3, 3), MoveTypes.Default, undefined));
+            expect(MoveParser.getMoveFromAN(board.board, true, 'd4')).toStrictEqual(new Move(new Position(1, 3), new Position(3, 3), MoveTypes.Default, undefined));
         });
     });
 
