@@ -7,6 +7,7 @@ import Rook from '../src/chess/pieces/Rook';
 import Pawn from '../src/chess/pieces/Pawn';
 import Queen from '../src/chess/pieces/Queen';
 import Knight from '../src/chess/pieces/Knight';
+import {InvalidMoveException} from "../src/chess/exceptions/move.exception";
 
 describe('Chess', () => {
     describe('MoveParser', () => {
@@ -62,8 +63,8 @@ describe('Chess', () => {
             expect(MoveParser.getExtraMoveData('R4d8')).toStrictEqual({ row: 3 });
         });
 
-        it('given a correct Algebraic notated chess move (no promotion), MoveParser.getPromotionPiece should return undefined', () => {
-            expect(MoveParser.getPromotionPiece('d8')).toBe(undefined);
+        it('given a correct Algebraic notated chess move (no promotion), MoveParser.getPromotionPiece should throw invalid move exception', () => {
+            expect(() => MoveParser.getPromotionPiece('d8')).toThrow(InvalidMoveException);
         });
 
         it('given a correct Algebraic notated chess move (promotion to a Queen), MoveParser.getPromotionPiece should return the Queen class', () => {

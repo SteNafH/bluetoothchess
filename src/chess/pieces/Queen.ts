@@ -1,5 +1,5 @@
 import Piece from './Piece';
-import { ChessBoard } from '../Board';
+import type { ChessBoard } from '../Board';
 import Position from '../Position';
 
 export default class Queen extends Piece {

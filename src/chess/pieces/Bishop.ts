@@ -1,6 +1,6 @@
 import Piece from './Piece';
-import { ChessBoard } from '../Board';
-import Position from '../Position';
+import type {ChessBoard} from '../Board';
+import Position from "../Position";
 
 export default class Bishop extends Piece {
     public get getPieceLetter(): string {

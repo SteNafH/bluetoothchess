@@ -1,15 +1,8 @@
-import { ChessBoard } from '../Board';
+import type {ChessBoard} from '../Board';
 import Position from '../Position';
-import Pawn from './Pawn';
-import Knight from './Knight';
-import Bishop from './Bishop';
-import Rook from './Rook';
-import Queen from './Queen';
-import King from './King';
+import {NotImplementedException} from "../exceptions/piece.exception";
 
-export type PieceType = typeof Pawn | typeof Knight | typeof Bishop | typeof Rook | typeof Queen | typeof King;
-
-export default abstract class Piece {
+export default class Piece {
     public white: boolean;
 
     public row: number;
@@ -21,10 +14,6 @@ export default abstract class Piece {
         this.white = white;
     }
 
-    protected isOutOfBounds(row: number, col: number): boolean {
-        return row < 0 || col < 0 || row > 7 || col > 7;
-    }
-
     protected isPreviousPosition(piece: Piece | null): Boolean {
         if (piece === null)
             return false;
@@ -33,16 +22,15 @@ export default abstract class Piece {
     }
 
     protected isPreviousPositionLine(board: ChessBoard, rowDelta: number, colDelta: number): Position[] {
-        let possiblePositions: Position[] = [];
+        const possiblePositions: Position[] = [];
 
         for (let i: number = 1; i < 8; i++) {
-            let row = this.row + (rowDelta * i);
-            let col = this.col + (colDelta * i);
+            const position = new Position(this.row + (rowDelta * i), this.col + (colDelta * i));
 
-            if (this.isOutOfBounds(row, col))
+            if (position.isOutOfBounds())
                 break;
 
-            let piece = board[row][col];
+            const piece = board[position.row][position.col];
 
             if (piece === null)
                 continue;
@@ -50,16 +38,22 @@ export default abstract class Piece {
             if (piece.getPieceLetter !== this.getPieceLetter)
                 break;
 
-            possiblePositions.push(new Position(piece.row, piece.col));
+            possiblePositions.push(position);
             break;
         }
 
         return possiblePositions;
     }
 
-    public abstract get getPieceLetter(): string;
+    public get getPieceLetter(): string {
+        throw new NotImplementedException('getPieceLetter Not Implemented');
+    }
 
-    public abstract getLegalMoves(board: ChessBoard): Position[];
+    public getLegalMoves(board: ChessBoard): Position[] {
+        throw new NotImplementedException('getLegalMoves Not Implemented');
+    }
 
-    public abstract getPreviousPositions(board: ChessBoard, capture?: Boolean): Position[];
+    public getPreviousPositions(board: ChessBoard, capture?: Boolean): Position[] {
+        throw new NotImplementedException('getPreviousPositions Not Implemented');
+    }
 }

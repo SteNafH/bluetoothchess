@@ -1,5 +1,5 @@
 import Piece from './Piece';
-import { ChessBoard } from '../Board';
+import type {ChessBoard} from '../Board';
 import Position from '../Position';
 
 export default class Pawn extends Piece {
@@ -16,22 +16,21 @@ export default class Pawn extends Piece {
     }
 
     public getPreviousPositions(board: ChessBoard, capture: boolean): Position[] {
-        let rowDelta = this.white ? -1 : 1;
-        let possiblePositions: Position[] = [];
+        const rowDelta = this.white ? -1 : 1;
+        const possiblePositions: Position[] = [];
 
         if (capture) {
-            let row: number = this.row + rowDelta;
-            let col: number = this.col - 1;
+            let position = new Position(this.row + rowDelta, this.col - 1);
 
-            if (!this.isOutOfBounds(row, col))
-                if (this.isPreviousPosition(board[row][col]))
-                    possiblePositions.push(new Position(row, col));
+            if (!position.isOutOfBounds())
+                if (this.isPreviousPosition(board[position.row][position.col]))
+                    possiblePositions.push(position);
 
-            col = this.col + 1;
+            position = new Position(this.row + rowDelta, this.col + 1);
 
-            if (!this.isOutOfBounds(row, col))
-                if (this.isPreviousPosition(board[row][col]))
-                    possiblePositions.push(new Position(row, col));
+            if (!position.isOutOfBounds())
+                if (this.isPreviousPosition(board[position.row][position.col]))
+                    possiblePositions.push(position);
 
         } else {
             if (this.isPreviousPosition(board[this.row + rowDelta][this.col]))

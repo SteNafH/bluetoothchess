@@ -1,11 +1,11 @@
 import Piece from './Piece';
-import { ChessBoard } from '../Board';
+import type {ChessBoard} from '../Board';
 import Position from '../Position';
 
 export default class Knight extends Piece {
     private knightMoves: Position[] = [
-        { col: 2, row: -1 }, { col: 2, row: 1 }, { col: 1, row: -2 }, { col: 1, row: 2 },
-        { col: -2, row: -1 }, { col: -2, row: 1 }, { col: -1, row: -2 }, { col: -1, row: 2 },
+        new Position(2, -1), new Position(2, 1), new Position(1, -2), new Position(1, 2),
+        new Position(-2, -1), new Position(-2, 1), new Position(-1, -2), new Position(-1, 2),
     ];
 
     public get getPieceLetter(): string {
@@ -13,19 +13,18 @@ export default class Knight extends Piece {
     }
 
     public getPreviousPositions(board: ChessBoard): Position[] {
-        let possiblePositions: Position[] = [];
+        const possiblePositions: Position[] = [];
 
-        for (let move of this.knightMoves) {
-            let row: number = this.row + move.row;
-            let col: number = this.col + move.col;
+        for (const move of this.knightMoves) {
+            const position = new Position(this.row + move.row, this.col + move.col);
 
-            if (this.isOutOfBounds(row, col))
+            if (position.isOutOfBounds())
                 continue;
 
-            let checkedSquare = this.isPreviousPosition(board[row][col]);
+            const checkedSquare = this.isPreviousPosition(board[position.row][position.col]);
 
             if (checkedSquare)
-                possiblePositions.push(new Position(row, col));
+                possiblePositions.push(position);
         }
 
         return possiblePositions;

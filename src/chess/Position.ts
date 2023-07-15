@@ -6,4 +6,8 @@ export default class Position {
         this.row = row;
         this.col = col;
     }
+
+    public isOutOfBounds() {
+        return this.row < 0 || this.col < 0 || this.row > 7 || this.col > 7;
+    }
 }
