@@ -8,6 +8,7 @@ import Pawn from './pieces/Pawn';
 import Move from './Move';
 import MoveTypes from './MoveTypes';
 import MoveParser from './MoveParser';
+import Position from "./Position";
 import {InvalidMoveException} from "./exceptions/move.exception";
 
 export type ChessBoard = (Piece | null)[][];
@@ -20,48 +21,48 @@ interface GameMove {
 export default class Board {
     public board: ChessBoard = [
         [
-            new Rook(0, 0, true),
-            new Knight(0, 1, true),
-            new Bishop(0, 2, true),
-            new Queen(0, 3, true),
-            new King(0, 4, true),
-            new Bishop(0, 5, true),
-            new Knight(0, 6, true),
-            new Rook(0, 7, true),
+            new Rook(new Position(0, 0) ,true),
+            new Knight(new Position(0, 1), true),
+            new Bishop(new Position(0, 2), true),
+            new Queen(new Position(0, 3), true),
+            new King(new Position(0, 4), true),
+            new Bishop(new Position(0, 5), true),
+            new Knight(new Position(0, 6), true),
+            new Rook(new Position(0, 7), true),
         ],
         [
-            new Pawn(1, 0, true),
-            new Pawn(1, 1, true),
-            new Pawn(1, 2, true),
-            new Pawn(1, 3, true),
-            new Pawn(1, 4, true),
-            new Pawn(1, 5, true),
-            new Pawn(1, 6, true),
-            new Pawn(1, 7, true),
+            new Pawn(new Position(1, 0), true),
+            new Pawn(new Position(1, 1), true),
+            new Pawn(new Position(1, 2), true),
+            new Pawn(new Position(1, 3), true),
+            new Pawn(new Position(1, 4), true),
+            new Pawn(new Position(1, 5), true),
+            new Pawn(new Position(1, 6), true),
+            new Pawn(new Position(1, 7), true),
         ],
         [null, null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null, null],
         [
-            new Pawn(6, 0, false),
-            new Pawn(6, 1, false),
-            new Pawn(6, 2, false),
-            new Pawn(6, 3, false),
-            new Pawn(6, 4, false),
-            new Pawn(6, 5, false),
-            new Pawn(6, 6, false),
-            new Pawn(6, 7, false),
+            new Pawn(new Position(6, 0), false),
+            new Pawn(new Position(6, 1), false),
+            new Pawn(new Position(6, 2), false),
+            new Pawn(new Position(6, 3), false),
+            new Pawn(new Position(6, 4), false),
+            new Pawn(new Position(6, 5), false),
+            new Pawn(new Position(6, 6), false),
+            new Pawn(new Position(6, 7), false),
         ],
         [
-            new Rook(7, 0, false),
-            new Knight(7, 1, false),
-            new Bishop(7, 2, false),
-            new Queen(7, 3, false),
-            new King(7, 4, false),
-            new Bishop(7, 5, false),
-            new Knight(7, 6, false),
-            new Rook(7, 7, false),
+            new Rook(new Position(7, 0), false),
+            new Knight(new Position(7, 1), false),
+            new Bishop(new Position(7, 2), false),
+            new Queen(new Position(7, 3), false),
+            new King(new Position(7, 4), false),
+            new Bishop(new Position(7, 5), false),
+            new Knight(new Position(7, 6), false),
+            new Rook(new Position(7, 7), false),
         ],
     ]
     public gameMoves: GameMove[] = [];
@@ -100,8 +101,7 @@ export default class Board {
         if (piece === null)
             throw new InvalidMoveException('No Piece Found To Move');
 
-        piece.row = move.newPos.row;
-        piece.col = move.newPos.col;
+        piece.position = move.newPos;
 
         this.board[move.newPos.row][move.newPos.col] = piece;
         this.board[move.prevPos.row][move.prevPos.col] = null;
@@ -124,7 +124,7 @@ export default class Board {
                 if (rook === null)
                     throw new InvalidMoveException('No Rook Found While Trying To Castle');
 
-                rook.col = rookX;
+                rook.position.col = rookX;
 
                 this.board[move.newPos.row][rookX] = rook;
                 this.board[move.prevPos.row][prevRookX] = null;
@@ -135,7 +135,7 @@ export default class Board {
                 if (promotionPiece === undefined || promotionPiece === Pawn)
                     throw new InvalidMoveException('Invalid Promotion Piece');
 
-                this.board[move.newPos.row][move.newPos.col] = new promotionPiece(move.newPos.row, move.newPos.col, piece.white);
+                this.board[move.newPos.row][move.newPos.col] = new promotionPiece(move.newPos, piece.white);
                 break;
             }
             case MoveTypes.EnPassant: {

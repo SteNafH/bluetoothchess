@@ -5,12 +5,10 @@ import {NotImplementedException} from "../exceptions/piece.exception";
 export default class Piece {
     public white: boolean;
 
-    public row: number;
-    public col: number;
+    public position: Position;
 
-    public constructor(row: number, col: number, white: boolean) {
-        this.row = row;
-        this.col = col;
+    public constructor(position: Position, white: boolean) {
+        this.position = position;
         this.white = white;
     }
 
@@ -25,7 +23,7 @@ export default class Piece {
         const possiblePositions: Position[] = [];
 
         for (let i: number = 1; i < 8; i++) {
-            const position = new Position(this.row + (rowDelta * i), this.col + (colDelta * i));
+            const position = new Position(this.position.row + (rowDelta * i), this.position.col + (colDelta * i));
 
             if (position.isOutOfBounds())
                 break;

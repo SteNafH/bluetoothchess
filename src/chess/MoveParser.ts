@@ -62,7 +62,7 @@ export default class MoveParser {
             prevPosition = new Position(row, 4);
         } else {
             newPosition = MoveParser.getNewPosition(move);
-            const piece = new pieceName(newPosition.row, newPosition.col, white);
+            const piece = new pieceName(newPosition, white);
             let previousPositions: Position[] = piece.getPreviousPositions(board, type === MoveTypes.Capture);
 
             if (previousPositions.length > 0 && type === MoveTypes.Capture && piece instanceof Pawn && piece.isMoveEnPassant(board))

@@ -12,7 +12,7 @@ export default class Pawn extends Piece {
     }
 
     public isMoveEnPassant(board: ChessBoard) {
-        return board[this.row][this.col] === null;
+        return board[this.position.row][this.position.col] === null;
     }
 
     public getPreviousPositions(board: ChessBoard, capture: boolean): Position[] {
@@ -20,25 +20,25 @@ export default class Pawn extends Piece {
         const possiblePositions: Position[] = [];
 
         if (capture) {
-            let position = new Position(this.row + rowDelta, this.col - 1);
+            let position = new Position(this.position.row + rowDelta, this.position.col - 1);
 
             if (!position.isOutOfBounds())
                 if (this.isPreviousPosition(board[position.row][position.col]))
                     possiblePositions.push(position);
 
-            position = new Position(this.row + rowDelta, this.col + 1);
+            position = new Position(this.position.row + rowDelta, this.position.col + 1);
 
             if (!position.isOutOfBounds())
                 if (this.isPreviousPosition(board[position.row][position.col]))
                     possiblePositions.push(position);
 
         } else {
-            if (this.isPreviousPosition(board[this.row + rowDelta][this.col]))
-                possiblePositions.push(new Position(this.row + rowDelta, this.col));
+            if (this.isPreviousPosition(board[this.position.row + rowDelta][this.position.col]))
+                possiblePositions.push(new Position(this.position.row + rowDelta, this.position.col));
 
-            if (((this.white && this.row === 3) || (!this.white && this.row === 4)) && board[this.row + rowDelta][this.col] === null) {
-                if (this.isPreviousPosition(board[this.row + rowDelta + rowDelta][this.col]))
-                    possiblePositions.push(new Position(this.row + rowDelta + rowDelta, this.col));
+            if (((this.white && this.position.row === 3) || (!this.white && this.position.row === 4)) && board[this.position.row + rowDelta][this.position.col] === null) {
+                if (this.isPreviousPosition(board[this.position.row + rowDelta + rowDelta][this.position.col]))
+                    possiblePositions.push(new Position(this.position.row + rowDelta + rowDelta, this.position.col));
             }
         }
 

@@ -20,7 +20,7 @@ export default class King extends Piece {
         const possiblePositions: Position[] = [];
 
         for (const move of this.kingMoves) {
-            const position = new Position(this.row + move.row, this.col + move.col);
+            const position = new Position(this.position.row + move.row, this.position.col + move.col);
 
             if (position.isOutOfBounds())
                 continue;
