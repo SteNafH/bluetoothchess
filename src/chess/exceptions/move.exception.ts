@@ -1,3 +1,5 @@
-class MoveException extends Error {}
+class MoveException extends Error {
+}
 
-export class InvalidMoveException extends MoveException {}
+export class InvalidMoveException extends MoveException {
+}

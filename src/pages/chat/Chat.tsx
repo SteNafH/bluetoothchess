@@ -1,109 +1,104 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 import {
-  BluetoothDevice,
-  BluetoothEventSubscription,
-} from 'react-native-bluetooth-classic';
-import {Button, Text, TextInput, View} from 'react-native';
+    BluetoothDevice,
+    BluetoothEventSubscription
+} from "react-native-bluetooth-classic";
+import { Button, Text, TextInput, View } from "react-native";
 
 interface ChatProps {
-  device: BluetoothDevice;
+    device: BluetoothDevice;
 }
 
-function Chat({device}: ChatProps) {
-  const [message, setMessage] = useState<string>('');
-  const [messages, setMessages] = useState<string[]>([]);
-  const [connection, setConnection] = useState<boolean>(false);
-  const [readSubscription, setReadSubscription] =
-    useState<BluetoothEventSubscription>();
+function Chat({ device }: ChatProps) {
+    const [message, setMessage] = useState<string>("");
+    const [messages, setMessages] = useState<string[]>([]);
+    const [connection, setConnection] = useState<boolean>(false);
+    const [readSubscription, setReadSubscription] =
+        useState<BluetoothEventSubscription>();
 
-  useEffect(() => {
-    async function connect() {
-      try {
-        let connection = await device.isConnected();
+    useEffect(() => {
+        async function connect() {
+            try {
+                let connection = await device.isConnected();
 
-        if (!connection) {
-          setMessages([
-            ...messages,
-            `Attempting connection to ${device.address}`,
-          ]);
+                if (!connection) {
+                    setMessages([
+                        ...messages,
+                        `Attempting connection to ${device.address}`
+                    ]);
 
-          connection = await device.connect();
+                    connection = await device.connect({ delimiter: "\r" });
+                }
 
-          setMessages(prevMessages => [
-            ...prevMessages,
-            'Connection successful',
-          ]);
-        } else {
-          setMessages(prevMessages => [
-            ...prevMessages,
-            `Connected to ${device.address}`,
-          ]);
+                setMessages(prevMessages => [
+                    ...prevMessages,
+                    `Connected to ${device.address}`
+                ]);
+
+                setConnection(connection);
+                initializeRead();
+            } catch (error: any) {
+                setMessages(prevMessages => [
+                    ...prevMessages,
+                    `Connection failed: ${error.message}`
+                ]);
+            }
         }
 
-        setConnection(connection);
-        initializeRead();
-      } catch (error: any) {
-        setMessages(prevMessages => [
-          ...prevMessages,
-          `Connection failed: ${error.message}`,
-        ]);
-      }
+        async function disconnect() {
+            if (connection) {
+                await device.disconnect();
+            }
+
+            uninitializeRead();
+        }
+
+        void connect();
+
+        return () => {
+            void disconnect();
+        };
+    }, []);
+
+    function uninitializeRead() {
+        if (readSubscription)
+            readSubscription.remove();
     }
 
-    async function disconnect() {
-      if (connection) {
-        await device.disconnect();
-      }
+    function initializeRead() {
+        const readSubscription = device.onDataReceived(data =>
+            setMessages(prevMessages => [...prevMessages, data.data])
+        );
 
-      uninitializeRead();
+        setReadSubscription(readSubscription);
     }
 
-    void connect();
+    async function sendMessage() {
+        try {
+            await device.write(`${message}\r`);
 
-    return () => {
-      void disconnect();
-    };
-  }, []);
-
-  function uninitializeRead() {
-    if (readSubscription) {
-      readSubscription.remove();
+            setMessages(prevMessages => [...prevMessages, message]);
+            setMessage("");
+        } catch (error: any) {
+        }
     }
-  }
 
-  function initializeRead() {
-    const readSubscription = device.onDataReceived(data =>
-      setMessages(prevMessages => [...prevMessages, data.data]),
-    );
-
-    setReadSubscription(readSubscription);
-  }
-
-  async function sendMessage() {
-    try {
-      await device.write(`${message}\r`);
-
-      setMessages(prevMessages => [...prevMessages, message]);
-      setMessage('');
-    } catch (error: any) {}
-  }
-
-  return (
-    <View>
-      <Text>Chat Room</Text>
-      {messages.map((message, index) => (
-        <View key={index}>
-          <Text>{message}</Text>
+    return (
+        <View>
+            <Text>Chat Room</Text>
+            {messages.map((message, index) => (
+                <View key={index}>
+                    <Text>{message}</Text>
+                </View>
+            ))}
+            <TextInput
+                value={message}
+                onChangeText={setMessage}
+                placeholder="Type a message..."
+            />
+            <Button title="Send" onPress={sendMessage} />
         </View>
-      ))}
-      <TextInput
-        value={message}
-        onChangeText={setMessage}
-        placeholder="Type a message..."
-      />
-      <Button title="Send" onPress={sendMessage} />
-    </View>
-  );
+    );
 }
 
 export default Chat;

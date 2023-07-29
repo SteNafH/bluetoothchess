@@ -1,3 +1,5 @@
-class PieceException extends Error {}
+class PieceException extends Error {
+}
 
-export class NotImplementedException extends PieceException {}
+export class NotImplementedException extends PieceException {
+}
