@@ -4,12 +4,12 @@ import {
     BluetoothEventSubscription
 } from "react-native-bluetooth-classic";
 import { Button, Text, TextInput, View } from "react-native";
+import { StackScreenProps } from "@react-navigation/stack";
+import { RootStackParamList } from "../App";
+import BluetoothService from "../services/BluetoothService";
 
-interface ChatProps {
-    device: BluetoothDevice;
-}
-
-function Chat({ device }: ChatProps) {
+function Chat({ route }: StackScreenProps<RootStackParamList, "Device">) {
+    const device = new BluetoothDevice(route.params.device, BluetoothService);
     const [message, setMessage] = useState<string>("");
     const [messages, setMessages] = useState<string[]>([]);
     const [connection, setConnection] = useState<boolean>(false);

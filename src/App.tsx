@@ -1,25 +1,25 @@
-import React, { useState } from "react";
-import { View } from "react-native";
-import { BluetoothDevice } from "./services/BluetoothService";
-import Chat from "./pages/chat/Chat";
-import DeviceList from "./pages/device-list/DeviceList";
+import 'react-native-gesture-handler';
+import * as React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import Chat from "./screens/Chat";
+import DeviceList from "./screens/DeviceList";
+import { BluetoothNativeDevice } from "react-native-bluetooth-classic";
 
-function App() {
-    const [device, setDevice] = useState<BluetoothDevice>();
+export type RootStackParamList = {
+    Home: undefined;
+    Device: { device: BluetoothNativeDevice };
+};
 
-    function selectDevice(device: BluetoothDevice) {
-        setDevice(device);
-    }
+const Stack = createStackNavigator<RootStackParamList>();
 
+export default function App() {
     return (
-        <View>
-            {!device ? (
-                <DeviceList selectDevice={selectDevice} />
-            ) : (
-                <Chat device={device} />
-            )}
-        </View>
+        <NavigationContainer>
+            <Stack.Navigator screenOptions={{ presentation: "card", headerTitleAlign: "center" }}>
+                <Stack.Screen name="Home" component={DeviceList} />
+                <Stack.Screen name="Device" component={Chat} />
+            </Stack.Navigator>
+        </NavigationContainer>
     );
 }
-
-export default App;
