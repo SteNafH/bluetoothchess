@@ -23,7 +23,7 @@ interface DeviceIconProps extends SvgProps {
     deviceClass: { deviceClass: number; majorClass: number; } | string | undefined;
 }
 
-export default function DeviceIcon(props: DeviceIconProps) {
+function DeviceIcon(props: DeviceIconProps) {
     if (!props.deviceClass || typeof props.deviceClass === "string")
         return <Question {...props} />;
 
@@ -38,3 +38,5 @@ export default function DeviceIcon(props: DeviceIconProps) {
             return <Question {...props} />;
     }
 }
+
+export default DeviceIcon;

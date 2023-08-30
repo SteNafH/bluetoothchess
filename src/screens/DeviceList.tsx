@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { PermissionsAndroid, SafeAreaView, ScrollView, Text, View } from "react-native";
-import { BluetoothDevice } from "../services/BluetoothService";
+import { PermissionsAndroid, SafeAreaView, ScrollView, StyleSheet, Text } from "react-native";
+import BluetoothService, { BluetoothDevice } from "../services/BluetoothService";
 import { useBluetooth } from "../hooks/useBluetooth";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../App";
 import { StackNavigationProp } from "@react-navigation/stack";
-import DeviceIcon from "../components/DeviceIcon";
+import Device from "../components/Device";
 
 const requestAccessFineLocationPermission = async () => {
     const granted = await PermissionsAndroid.request(
@@ -25,100 +25,130 @@ const requestAccessFineLocationPermission = async () => {
 };
 
 function DeviceList() {
-    const bluetooth = useBluetooth();
+    const enabled = useBluetooth();
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-    const [devices, setDevices] = useState<Map<string, BluetoothDevice>>(new Map());
+
+    const [discovering, setDiscovering] = useState<boolean>(false);
+    const [accepting, setAccepting] = useState<boolean>(false);
+    const [connectedDevicesFound, setConnectedDevicesFound] = useState<boolean>(false);
+    const [pairedDevicesFound, setPairedDevicesFound] = useState<boolean>(false);
+
+    const [connectedDevices, setConnectedDevices] = useState<Map<string, BluetoothDevice>>(new Map());
+    const [pairedDevices, setPairedDevices] = useState<Map<string, BluetoothDevice>>(new Map());
+    const [discoveredDevices, setDiscoveredDevices] = useState<Map<string, BluetoothDevice>>(new Map());
+
+    useEffect(() => {
+
+    }, []);
 
     useEffect(() => {
         async function getConnectedDevices() {
+            if (connectedDevicesFound)
+                return;
+
             try {
-                const connected = await bluetooth.getConnectedDevices()
+                const connected = await BluetoothService.getConnectedDevices()
                     .then(devices => new Map(devices.map(device => [device.address, device])));
 
-                setDevices(prevDevices => new Map([...prevDevices, ...connected]));
+                setConnectedDevices(connected);
+                setConnectedDevicesFound(true);
             } catch (error: any) {
             }
         }
 
         async function getPairedDevices() {
+            if (pairedDevicesFound)
+                return;
+
             try {
-                const bonded = await bluetooth.getBondedDevices()
+                const paired = await BluetoothService.getBondedDevices()
                     .then(devices => new Map(devices.map(device => [device.address, device])));
 
-                setDevices(prevDevices => new Map([...prevDevices, ...bonded]));
+                setPairedDevices(paired);
+                setPairedDevicesFound(true);
             } catch (error: any) {
             }
         }
 
         async function acceptConnections() {
+            if (accepting)
+                return;
+
+            setAccepting(true);
             try {
-                const device = await bluetooth.accept({ delimiter: "\r" });
+                const device = await BluetoothService.accept({ delimiter: "\r" });
 
                 if (device)
                     handleDevice(device);
 
                 void acceptConnections();
             } catch (error: any) {
-                console.log(error);
             }
+            setAccepting(false);
         }
 
-        void acceptConnections();
-        void getNewDevices();
-        void getConnectedDevices();
-        void getPairedDevices();
+        if (enabled) {
+            void getConnectedDevices();
+            void getPairedDevices();
+            void acceptConnections();
+            void getNewDevices();
+        }
 
         return () => {
-            void bluetooth.cancelDiscovery()
+            void BluetoothService.cancelDiscovery()
                 .catch(() => undefined);
-            void bluetooth.cancelAccept()
+            void BluetoothService.cancelAccept()
                 .catch(() => undefined);
         };
-    }, []);
+    }, [enabled]);
 
     async function getNewDevices() {
+        if (discovering)
+            return;
+
         try {
             const granted = await requestAccessFineLocationPermission();
 
             if (!granted)
                 throw new Error("Access fine location was not granted");
 
-            const discoveredDevices = await bluetooth.startDiscovery()
+            setDiscovering(true);
+            const discoverd = await BluetoothService.startDiscovery()
                 .then(devices => new Map(devices.map(device => [device.address, device])));
 
-            setDevices(prevDevices => new Map([...prevDevices, ...discoveredDevices]));
+            setDiscoveredDevices(prevDiscoveredDevices => new Map([...prevDiscoveredDevices, ...discoverd]));
         } catch (error: any) {
         }
+
+        setDiscovering(false);
     }
 
     async function handleDevice(device: BluetoothDevice) {
-        // selectDevice(device);
-
         // @ts-ignore
         navigation.navigate("Device", { device: device._nativeDevice });
     }
 
-    // console.log(pairedDevices);
-    // console.log(connectedDevices);
-    // console.log(newDevices);
-
     return (
         <SafeAreaView>
-            <ScrollView style={{ paddingHorizontal: 20 }}>
-                <Text style={{ color: "#1c1c1e", fontSize: 16, fontWeight: "bold" }}>Apparaten</Text>
-                {Array.from(devices.entries()).map(([key, device], i: number) => {
+            <ScrollView style={styles.container}>
+                <Text style={styles.header}>Verbonden apparaten</Text>
+                {Array.from(connectedDevices.entries()).map(([key, device]) => {
                     return (
-                        <View key={"device-" + key} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 20 }}>
-                            <DeviceIcon deviceClass={device.deviceClass} height={30} width={30} />
-                            <View>
-                                <Text
-                                    style={{ color: "#1c1c1e", fontSize: 16, fontWeight: "bold" }}>{device.name}</Text>
-                                <Text style={{
-                                    color: "#1c1c1e",
-                                    fontSize: 14,
-                                }}>{device.address}</Text>
-                            </View>
-                        </View>
+                        <Device key={"device-" + key} device={device} />
+                    );
+                })}
+
+                <Text style={styles.header}>Gekoppelde apparaten</Text>
+                {Array.from(pairedDevices.entries()).map(([key, device]) => {
+                    return (
+                        <Device key={"device-" + key} device={device} />
+                    );
+                })}
+
+                <Text style={styles.header}>Apparaten in de buurt</Text>
+                {Array.from(discoveredDevices.entries()).map(([key, device]) => {
+                    return (
+                        <Device key={"device-" + key} device={device} />
                     );
                 })}
             </ScrollView>
@@ -126,4 +156,15 @@ function DeviceList() {
     );
 }
 
-    export default DeviceList;
+const styles = StyleSheet.create({
+    container: {
+        paddingHorizontal: 20
+    },
+    header: {
+        color: "#1C1C1E",
+        fontSize: 16,
+        fontWeight: "bold"
+    }
+});
+
+export default DeviceList;
