@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     },
     modalView: {
         margin: 20,
-        backgroundColor: "white",
+        backgroundColor: "#312D2A",
         borderRadius: 20,
         paddingVertical: 20,
         paddingHorizontal: 25,
@@ -92,19 +92,20 @@ const styles = StyleSheet.create({
         padding: 10,
         elevation: 2,
         marginTop: 10,
-        backgroundColor: "#2196F3"
+        backgroundColor: "#85AA4B"
     },
     buttonText: {
         color: "#FFFFFF",
-        textAlign: "center"
+        textAlign: "center",
+        fontSize: 16
     },
     header: {
-        color: "#1C1C1E",
+        color: "#FFFFFF",
         fontSize: 20,
         fontWeight: "bold"
     },
     body: {
-        color: "#1C1C1E",
+        color: "#FFFFFF",
         textAlign: "center"
     },
 });
