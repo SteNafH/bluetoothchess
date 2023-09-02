@@ -1,9 +1,6 @@
 import React from "react";
-import Headphones from "../icons/headphones.svg";
-import Laptop from "../icons/laptop.svg";
-import Mobile from "../icons/mobile.svg";
-import Question from "../icons/question.svg";
 import { SvgProps } from "react-native-svg";
+import { HeadphonesIcon, LaptopIcon, MobileIcon, QuestionIcon } from "../icons";
 
 const MajorDevice = {
     AUDIO_VIDEO: 1024,
@@ -25,17 +22,17 @@ interface DeviceIconProps extends SvgProps {
 
 function DeviceIcon(props: DeviceIconProps) {
     if (!props.deviceClass || typeof props.deviceClass === "string")
-        return <Question {...props} />;
+        return <QuestionIcon {...props} />;
 
     switch (props.deviceClass.majorClass) {
         case MajorDevice.AUDIO_VIDEO:
-            return <Headphones {...props} />;
+            return <HeadphonesIcon {...props} />;
         case MajorDevice.COMPUTER:
-            return <Laptop {...props} />;
+            return <LaptopIcon {...props} />;
         case MajorDevice.PHONE:
-            return <Mobile {...props} />;
+            return <MobileIcon {...props} />;
         default:
-            return <Question {...props} />;
+            return <QuestionIcon {...props} />;
     }
 }
 

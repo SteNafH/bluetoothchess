@@ -19,7 +19,16 @@ function App() {
     return (
         <BluetoothProvider>
             <NavigationContainer>
-                <Stack.Navigator screenOptions={{ presentation: "card", headerTitleAlign: "center" }}>
+                <Stack.Navigator screenOptions={{
+                    presentation: "card",
+                    headerTitleAlign: "center",
+                    headerTintColor: "#fff",
+                    headerStyle: {
+                        backgroundColor: "#252422",
+                        elevation: 0,
+                        shadowOpacity: 0
+                    }
+                }}>
                     <Stack.Screen name="Home" options={{ title: "Apparaten" }} component={DeviceList} />
                     <Stack.Screen name="Device" component={Chat} />
                 </Stack.Navigator>

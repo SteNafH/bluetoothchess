@@ -14,7 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../App";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Device from "../components/Device";
-import Spinner from "../icons/spinner.svg";
+import { MagnifyingGlassIcon, SpinnerIcon } from "../icons";
 
 const requestAccessFineLocationPermission = async () => {
     const granted = await PermissionsAndroid.request(
@@ -166,40 +166,45 @@ function DeviceList() {
     });
 
     return (
-        <SafeAreaView>
-            <ScrollView style={styles.container}>
-                <TextInput onChangeText={setSearch} value={search} placeholder={"Zoek apparaat"} />
+        <SafeAreaView style={styles.container}>
+            <ScrollView style={styles.scrollView}>
+                <View style={styles.inputContainer}>
+                    <MagnifyingGlassIcon width={20} height={20} color={"#BEBEBE"} />
+                    <TextInput onChangeText={setSearch} value={search} placeholder={"Zoek apparaat"}
+                               style={styles.input} placeholderTextColor={"#858482"}/>
+                </View>
+
                 <View style={styles.header}>
                     <Text style={styles.headerText}>Verbonden apparaten</Text>
-                    <Text style={styles.headerSectionCount}>{filteredConnectedDevices.length}</Text>
+                    <Text style={styles.headerSectionCount}>{connectedDevices.size}</Text>
                 </View>
 
                 {filteredConnectedDevices.map(device => (
-                    <Device key={device.address} device={device} />
+                    <Device key={device.address} device={device} onChallenge={handleDevice} />
                 ))}
 
                 <View style={styles.header}>
                     <Text style={styles.headerText}>Gekoppelde apparaten</Text>
-                    <Text style={styles.headerSectionCount}>{filteredPairedDevices.length}</Text>
+                    <Text style={styles.headerSectionCount}>{pairedDevices.size}</Text>
                 </View>
 
                 {filteredPairedDevices.map(device => (
-                    <Device key={device.address} device={device} />
+                    <Device key={device.address} device={device} onChallenge={handleDevice} />
                 ))}
 
                 <View style={styles.header}>
                     <Text style={styles.headerText}>Apparaten in de buurt</Text>
-                    <Text style={styles.headerSectionCount}>{filteredDiscoveredDevices.length}</Text>
+                    <Text style={styles.headerSectionCount}>{discoveredDevices.size}</Text>
 
                     <Pressable onPress={getNewDevices} style={styles.discoverButton}>
                         <Animated.View style={{ transform: [{ rotate: spin }] }}>
-                            <Spinner width={20} height={20} color={"#1C1C1E"} />
+                            <SpinnerIcon width={20} height={20} color={"#FFFFFF"} />
                         </Animated.View>
                     </Pressable>
                 </View>
 
                 {filteredDiscoveredDevices.map(device => (
-                    <Device key={device.address} device={device} />
+                    <Device key={device.address} device={device} onChallenge={handleDevice} />
                 ))}
             </ScrollView>
 
@@ -209,8 +214,28 @@ function DeviceList() {
 
 const styles = StyleSheet.create({
     container: {
+        flexGrow: 1,
+        backgroundColor: "#312D2A"
+    },
+    scrollView: {
         paddingHorizontal: 20,
         flexGrow: 1
+    },
+    inputContainer: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 5,
+        backgroundColor: "#464241",
+        paddingHorizontal: 10,
+        borderRadius: 10,
+        marginVertical: 10
+    },
+    input: {
+        color: "#BEBEBE",
+        fontWeight: "bold",
+        fontSize: 16,
+        flexGrow: 1,
     },
     header: {
         display: "flex",
@@ -220,20 +245,20 @@ const styles = StyleSheet.create({
         marginVertical: 5
     },
     headerText: {
-        color: "#1C1C1E",
+        color: "#FFFFFF",
         fontSize: 16,
         fontWeight: "bold"
     },
     headerSectionCount: {
-        color: "#1C1C1E",
+        color: "#FFFFFF",
         fontSize: 16,
         fontWeight: "bold",
-        backgroundColor: "#E6E6E6",
+        backgroundColor: "#454140",
         paddingHorizontal: 5,
         borderRadius: 5
     },
     discoverButton: {
-        backgroundColor: "#E6E6E6",
+        backgroundColor: "#252422",
         padding: 5,
         borderRadius: 30 / 2,
         marginLeft: "auto"
