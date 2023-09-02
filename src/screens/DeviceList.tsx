@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { PermissionsAndroid, SafeAreaView, ScrollView, StyleSheet, Text } from "react-native";
+import {
+    PermissionsAndroid,
+    SafeAreaView,
+    SectionList,
+    StyleSheet,
+    Text,
+    TextInput,
+    View
+} from "react-native";
 import BluetoothService, { BluetoothDevice } from "../services/BluetoothService";
 import { useBluetooth } from "../hooks/useBluetooth";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../App";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Device from "../components/Device";
+import Spinner from "../icons/spinner.svg";
 
 const requestAccessFineLocationPermission = async () => {
     const granted = await PermissionsAndroid.request(
@@ -37,9 +46,7 @@ function DeviceList() {
     const [pairedDevices, setPairedDevices] = useState<Map<string, BluetoothDevice>>(new Map());
     const [discoveredDevices, setDiscoveredDevices] = useState<Map<string, BluetoothDevice>>(new Map());
 
-    useEffect(() => {
-
-    }, []);
+    const [search, setSearch] = useState<string>("");
 
     useEffect(() => {
         async function getConnectedDevices() {
@@ -80,11 +87,13 @@ function DeviceList() {
 
                 if (device)
                     handleDevice(device);
-
-                void acceptConnections();
             } catch (error: any) {
+                setAccepting(false);
+                return;
             }
+
             setAccepting(false);
+            void acceptConnections();
         }
 
         if (enabled) {
@@ -113,10 +122,10 @@ function DeviceList() {
                 throw new Error("Access fine location was not granted");
 
             setDiscovering(true);
-            const discoverd = await BluetoothService.startDiscovery()
+            const discovered = await BluetoothService.startDiscovery()
                 .then(devices => new Map(devices.map(device => [device.address, device])));
 
-            setDiscoveredDevices(prevDiscoveredDevices => new Map([...prevDiscoveredDevices, ...discoverd]));
+            setDiscoveredDevices(prevDiscoveredDevices => new Map([...prevDiscoveredDevices, ...discovered]));
         } catch (error: any) {
         }
 
@@ -128,30 +137,38 @@ function DeviceList() {
         navigation.navigate("Device", { device: device._nativeDevice });
     }
 
+    const lowerCaseSearch = search.toLowerCase();
+    const filteredConnectedDevices = Array.from(connectedDevices.values()).filter(device => device.name.toLowerCase().includes(lowerCaseSearch));
+    const filteredPairedDevices = Array.from(pairedDevices.values()).filter(device => device.name.toLowerCase().includes(lowerCaseSearch));
+    const filteredDiscoveredDevices = Array.from(discoveredDevices.values()).filter(device => device.name.toLowerCase().includes(lowerCaseSearch));
+
     return (
         <SafeAreaView>
-            <ScrollView style={styles.container}>
-                <Text style={styles.header}>Verbonden apparaten</Text>
-                {Array.from(connectedDevices.entries()).map(([key, device]) => {
-                    return (
-                        <Device key={"device-" + key} device={device} />
-                    );
-                })}
-
-                <Text style={styles.header}>Gekoppelde apparaten</Text>
-                {Array.from(pairedDevices.entries()).map(([key, device]) => {
-                    return (
-                        <Device key={"device-" + key} device={device} />
-                    );
-                })}
-
-                <Text style={styles.header}>Apparaten in de buurt</Text>
-                {Array.from(discoveredDevices.entries()).map(([key, device]) => {
-                    return (
-                        <Device key={"device-" + key} device={device} />
-                    );
-                })}
-            </ScrollView>
+            <TextInput onChangeText={setSearch} value={search} placeholder={"Zoek apparaat"} />
+            <SectionList
+                style={styles.container}
+                sections={[
+                    { title: "Verbonden apparaten", data: filteredConnectedDevices, key: "connectedDevices" },
+                    { title: "Gekoppelde apparaten", data: filteredPairedDevices, key: "pairedDevices" },
+                    { title: "Apparaten in de buurt", data: filteredDiscoveredDevices, key: "discoveredDevices" }
+                ]}
+                renderItem={({ item }) => (
+                    <Device device={item} />
+                )}
+                renderSectionHeader={({ section }) => (
+                    <View style={styles.header}>
+                        <Text style={styles.headerText}>{section.title}</Text>
+                        <Text style={styles.headerSectionCount}>{section.data.length}</Text>
+                        {section.key === "discoveredDevices" && (
+                            <Spinner color={"#000000"} height={20} width={20} />
+                        )}
+                    </View>
+                )}
+                ItemSeparatorComponent={() => (
+                    <View style={styles.itemSeparator} />
+                )}
+                keyExtractor={item => item.address}
+            />
         </SafeAreaView>
     );
 }
@@ -161,9 +178,29 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20
     },
     header: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 5,
+        marginVertical: 5
+    },
+    headerText: {
         color: "#1C1C1E",
         fontSize: 16,
         fontWeight: "bold"
+    },
+    headerSectionCount: {
+        color: "#1C1C1E",
+        fontSize: 16,
+        fontWeight: "bold",
+        backgroundColor: "#D3D3D3",
+        paddingHorizontal: 5,
+        borderRadius: 5
+    },
+    itemSeparator: {
+        width: "100%",
+        height: 1,
+        backgroundColor: "#000000"
     }
 });
 

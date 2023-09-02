@@ -20,7 +20,7 @@ function App() {
         <BluetoothProvider>
             <NavigationContainer>
                 <Stack.Navigator screenOptions={{ presentation: "card", headerTitleAlign: "center" }}>
-                    <Stack.Screen name="Home" component={DeviceList} />
+                    <Stack.Screen name="Home" options={{ title: "Apparaten" }} component={DeviceList} />
                     <Stack.Screen name="Device" component={Chat} />
                 </Stack.Navigator>
             </NavigationContainer>

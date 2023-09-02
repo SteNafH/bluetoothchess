@@ -26,7 +26,8 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        gap: 20
+        gap: 20,
+        paddingVertical: 10
     },
     deviceName: {
         color: "#1c1c1e",
