@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import {
-    PermissionsAndroid,
-    SafeAreaView,
-    SectionList,
+    Animated, Easing,
+    PermissionsAndroid, Pressable,
+    SafeAreaView, ScrollView,
     StyleSheet,
     Text,
     TextInput,
@@ -47,6 +47,24 @@ function DeviceList() {
     const [discoveredDevices, setDiscoveredDevices] = useState<Map<string, BluetoothDevice>>(new Map());
 
     const [search, setSearch] = useState<string>("");
+    const spinValue = new Animated.Value(0);
+
+    useEffect(() => {
+        if (discovering)
+            Animated.loop(
+                Animated.timing(
+                    spinValue,
+                    {
+                        toValue: 1,
+                        duration: 1000,
+                        easing: Easing.linear,
+                        useNativeDriver: true
+                    }
+                )
+            ).start();
+        else
+            spinValue.stopAnimation();
+    }, [discovering, spinValue]);
 
     useEffect(() => {
         async function getConnectedDevices() {
@@ -142,40 +160,57 @@ function DeviceList() {
     const filteredPairedDevices = Array.from(pairedDevices.values()).filter(device => device.name.toLowerCase().includes(lowerCaseSearch));
     const filteredDiscoveredDevices = Array.from(discoveredDevices.values()).filter(device => device.name.toLowerCase().includes(lowerCaseSearch));
 
+    const spin = spinValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: ["0deg", "360deg"]
+    });
+
     return (
         <SafeAreaView>
-            <TextInput onChangeText={setSearch} value={search} placeholder={"Zoek apparaat"} />
-            <SectionList
-                style={styles.container}
-                sections={[
-                    { title: "Verbonden apparaten", data: filteredConnectedDevices, key: "connectedDevices" },
-                    { title: "Gekoppelde apparaten", data: filteredPairedDevices, key: "pairedDevices" },
-                    { title: "Apparaten in de buurt", data: filteredDiscoveredDevices, key: "discoveredDevices" }
-                ]}
-                renderItem={({ item }) => (
-                    <Device device={item} />
-                )}
-                renderSectionHeader={({ section }) => (
-                    <View style={styles.header}>
-                        <Text style={styles.headerText}>{section.title}</Text>
-                        <Text style={styles.headerSectionCount}>{section.data.length}</Text>
-                        {section.key === "discoveredDevices" && (
-                            <Spinner color={"#000000"} height={20} width={20} />
-                        )}
-                    </View>
-                )}
-                ItemSeparatorComponent={() => (
-                    <View style={styles.itemSeparator} />
-                )}
-                keyExtractor={item => item.address}
-            />
+            <ScrollView style={styles.container}>
+                <TextInput onChangeText={setSearch} value={search} placeholder={"Zoek apparaat"} />
+                <View style={styles.header}>
+                    <Text style={styles.headerText}>Verbonden apparaten</Text>
+                    <Text style={styles.headerSectionCount}>{filteredConnectedDevices.length}</Text>
+                </View>
+
+                {filteredConnectedDevices.map(device => (
+                    <Device key={device.address} device={device} />
+                ))}
+
+                <View style={styles.header}>
+                    <Text style={styles.headerText}>Gekoppelde apparaten</Text>
+                    <Text style={styles.headerSectionCount}>{filteredPairedDevices.length}</Text>
+                </View>
+
+                {filteredPairedDevices.map(device => (
+                    <Device key={device.address} device={device} />
+                ))}
+
+                <View style={styles.header}>
+                    <Text style={styles.headerText}>Apparaten in de buurt</Text>
+                    <Text style={styles.headerSectionCount}>{filteredDiscoveredDevices.length}</Text>
+
+                    <Pressable onPress={getNewDevices} style={styles.discoverButton}>
+                        <Animated.View style={{ transform: [{ rotate: spin }] }}>
+                            <Spinner width={20} height={20} color={"#1C1C1E"} />
+                        </Animated.View>
+                    </Pressable>
+                </View>
+
+                {filteredDiscoveredDevices.map(device => (
+                    <Device key={device.address} device={device} />
+                ))}
+            </ScrollView>
+
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
+        flexGrow: 1
     },
     header: {
         display: "flex",
@@ -193,14 +228,15 @@ const styles = StyleSheet.create({
         color: "#1C1C1E",
         fontSize: 16,
         fontWeight: "bold",
-        backgroundColor: "#D3D3D3",
+        backgroundColor: "#E6E6E6",
         paddingHorizontal: 5,
         borderRadius: 5
     },
-    itemSeparator: {
-        width: "100%",
-        height: 1,
-        backgroundColor: "#000000"
+    discoverButton: {
+        backgroundColor: "#E6E6E6",
+        padding: 5,
+        borderRadius: 30 / 2,
+        marginLeft: "auto"
     }
 });
 

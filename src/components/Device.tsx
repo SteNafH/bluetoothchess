@@ -7,11 +7,13 @@ interface DeviceProps {
     device: BluetoothDevice;
 }
 
-function Device({device}: DeviceProps) {
+function Device({ device }: DeviceProps) {
     return (
         <View
-              style={styles.device}>
-            <DeviceIcon deviceClass={device.deviceClass} height={30} width={30} />
+            style={styles.device}>
+            <View style={styles.deviceIcon}>
+                <DeviceIcon deviceClass={device.deviceClass} height={30} width={30} />
+            </View>
             <View>
                 <Text
                     style={styles.deviceName}>{device.name}</Text>
@@ -28,6 +30,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 20,
         paddingVertical: 10
+    },
+    deviceIcon: {
+        padding: 15,
+        borderRadius: 10,
+        backgroundColor: "#FFFFFF"
     },
     deviceName: {
         color: "#1c1c1e",
