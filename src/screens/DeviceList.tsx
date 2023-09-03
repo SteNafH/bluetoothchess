@@ -142,7 +142,7 @@ function DeviceList() {
 
     function handleDevice(device: BluetoothDevice) {
         // @ts-ignore
-        navigation.navigate("Device", { device: device._nativeDevice });
+        navigation.navigate("Challenge", { device: device._nativeDevice });
     }
 
     const lowerCaseSearch = search.toLowerCase();
@@ -215,7 +215,6 @@ function DeviceList() {
                     )}
                 </View>
             </ScrollView>
-
         </SafeAreaView>
     );
 }
@@ -240,7 +239,6 @@ function DeviceInList({ device, showSeparator, handleDevice }: DeviceInListProps
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        backgroundColor: "#312D2A"
     },
     scrollView: {
         paddingHorizontal: 20,
