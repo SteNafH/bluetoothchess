@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
     Animated, Easing,
     PermissionsAndroid, Pressable,
@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import BluetoothService, { BluetoothDevice } from "../services/BluetoothService";
 import { useBluetooth } from "../hooks/useBluetooth";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../App";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Device from "../components/Device";
@@ -39,8 +39,6 @@ function DeviceList() {
 
     const [discovering, setDiscovering] = useState<boolean>(false);
     const [accepting, setAccepting] = useState<boolean>(false);
-    const [connectedDevicesFound, setConnectedDevicesFound] = useState<boolean>(false);
-    const [pairedDevicesFound, setPairedDevicesFound] = useState<boolean>(false);
 
     const [connectedDevices, setConnectedDevices] = useState<Map<string, BluetoothDevice>>(new Map());
     const [pairedDevices, setPairedDevices] = useState<Map<string, BluetoothDevice>>(new Map());
@@ -66,31 +64,23 @@ function DeviceList() {
             spinValue.stopAnimation();
     }, [discovering, spinValue]);
 
-    useEffect(() => {
+    useFocusEffect(useCallback(() => {
         async function getConnectedDevices() {
-            if (connectedDevicesFound)
-                return;
-
             try {
                 const connected = await BluetoothService.getConnectedDevices()
                     .then(devices => new Map(devices.map(device => [device.address, device])));
 
                 setConnectedDevices(connected);
-                setConnectedDevicesFound(true);
             } catch (error: any) {
             }
         }
 
         async function getPairedDevices() {
-            if (pairedDevicesFound)
-                return;
-
             try {
                 const paired = await BluetoothService.getBondedDevices()
                     .then(devices => new Map(devices.map(device => [device.address, device])));
 
                 setPairedDevices(paired);
-                setPairedDevicesFound(true);
             } catch (error: any) {
             }
         }
@@ -127,7 +117,7 @@ function DeviceList() {
             void BluetoothService.cancelAccept()
                 .catch(() => undefined);
         };
-    }, [enabled]);
+    }, [enabled]));
 
     async function getNewDevices() {
         if (discovering)
@@ -150,7 +140,7 @@ function DeviceList() {
         setDiscovering(false);
     }
 
-    async function handleDevice(device: BluetoothDevice) {
+    function handleDevice(device: BluetoothDevice) {
         // @ts-ignore
         navigation.navigate("Device", { device: device._nativeDevice });
     }
@@ -167,48 +157,83 @@ function DeviceList() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView style={styles.scrollView}>
-                <View style={styles.inputContainer}>
-                    <MagnifyingGlassIcon width={20} height={20} color={"#BEBEBE"} />
-                    <TextInput onChangeText={setSearch} value={search} placeholder={"Zoek apparaat"}
-                               style={styles.input} placeholderTextColor={"#858482"}/>
+            <ScrollView contentContainerStyle={styles.scrollView}>
+                <View>
+                    <View style={styles.inputContainer}>
+                        <MagnifyingGlassIcon width={20} height={20} color={"#BEBEBE"} />
+                        <TextInput onChangeText={setSearch} value={search} placeholder={"Zoek apparaat"}
+                                   style={styles.input} placeholderTextColor={"#858482"} />
+                    </View>
+
+                    <View style={styles.header}>
+                        <Text style={styles.headerText}>Verbonden apparaten</Text>
+                        <Text style={styles.headerSectionCount}>{connectedDevices.size}</Text>
+                    </View>
+
+                    {filteredConnectedDevices.map((device, index) => (
+                        <DeviceInList key={device.address} device={device} handleDevice={handleDevice}
+                                      showSeparator={index !== filteredConnectedDevices.length - 1} />
+                    ))}
+                    {filteredConnectedDevices.length === 0 && (
+                        <Text>Geen verbonden apparaten gevonden</Text>
+                    )}
                 </View>
 
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>Verbonden apparaten</Text>
-                    <Text style={styles.headerSectionCount}>{connectedDevices.size}</Text>
+                <View>
+                    <View style={styles.header}>
+                        <Text style={styles.headerText}>Gekoppelde apparaten</Text>
+                        <Text style={styles.headerSectionCount}>{pairedDevices.size}</Text>
+                    </View>
+
+                    {filteredPairedDevices.map((device, index) => (
+                        <DeviceInList key={device.address} device={device} handleDevice={handleDevice}
+                                      showSeparator={index !== filteredPairedDevices.length - 1} />
+                    ))}
+                    {filteredPairedDevices.length === 0 && (
+                        <Text>Geen gekoppelde apparaten gevonden</Text>
+                    )}
                 </View>
 
-                {filteredConnectedDevices.map(device => (
-                    <Device key={device.address} device={device} onChallenge={handleDevice} />
-                ))}
+                <View>
+                    <View style={styles.header}>
+                        <Text style={styles.headerText}>Apparaten in de buurt</Text>
+                        <Text style={styles.headerSectionCount}>{discoveredDevices.size}</Text>
 
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>Gekoppelde apparaten</Text>
-                    <Text style={styles.headerSectionCount}>{pairedDevices.size}</Text>
+                        <Pressable onPress={getNewDevices} style={styles.discoverButton}>
+                            <Animated.View style={{ transform: [{ rotate: spin }] }}>
+                                <SpinnerIcon width={20} height={20} color={"#FFFFFF"} />
+                            </Animated.View>
+                        </Pressable>
+                    </View>
+
+                    {filteredDiscoveredDevices.map((device, index) => (
+                        <DeviceInList key={device.address} device={device} handleDevice={handleDevice}
+                                      showSeparator={index !== filteredDiscoveredDevices.length - 1} />
+                    ))}
+                    {filteredPairedDevices.length === 0 && (
+                        <Text>Geen apparaten in de buurt gevonden</Text>
+                    )}
                 </View>
-
-                {filteredPairedDevices.map(device => (
-                    <Device key={device.address} device={device} onChallenge={handleDevice} />
-                ))}
-
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>Apparaten in de buurt</Text>
-                    <Text style={styles.headerSectionCount}>{discoveredDevices.size}</Text>
-
-                    <Pressable onPress={getNewDevices} style={styles.discoverButton}>
-                        <Animated.View style={{ transform: [{ rotate: spin }] }}>
-                            <SpinnerIcon width={20} height={20} color={"#FFFFFF"} />
-                        </Animated.View>
-                    </Pressable>
-                </View>
-
-                {filteredDiscoveredDevices.map(device => (
-                    <Device key={device.address} device={device} onChallenge={handleDevice} />
-                ))}
             </ScrollView>
 
         </SafeAreaView>
+    );
+}
+
+interface DeviceInListProps {
+    device: BluetoothDevice;
+    showSeparator: boolean;
+    handleDevice: (device: BluetoothDevice) => void;
+}
+
+function DeviceInList({ device, showSeparator, handleDevice }: DeviceInListProps) {
+    return (
+        <>
+            <Device device={device} onChallenge={handleDevice} />
+            {showSeparator && (
+                <View style={styles.separator} />
+            )}
+        </>
     );
 }
 
@@ -219,7 +244,8 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         paddingHorizontal: 20,
-        flexGrow: 1
+        flexGrow: 1,
+        gap: 20
     },
     inputContainer: {
         display: "flex",
@@ -235,7 +261,7 @@ const styles = StyleSheet.create({
         color: "#BEBEBE",
         fontWeight: "bold",
         fontSize: 16,
-        flexGrow: 1,
+        flexGrow: 1
     },
     header: {
         display: "flex",
@@ -256,6 +282,12 @@ const styles = StyleSheet.create({
         backgroundColor: "#454140",
         paddingHorizontal: 5,
         borderRadius: 5
+    },
+    separator: {
+        backgroundColor: "#252422",
+        height: 1,
+        flexGrow: 1,
+        marginLeft: 80
     },
     discoverButton: {
         backgroundColor: "#252422",
