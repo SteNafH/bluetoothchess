@@ -210,7 +210,7 @@ function DeviceList() {
                         <DeviceInList key={device.address} device={device} handleDevice={handleDevice}
                                       showSeparator={index !== filteredDiscoveredDevices.length - 1} />
                     ))}
-                    {filteredPairedDevices.length === 0 && (
+                    {filteredDiscoveredDevices.length === 0 && (
                         <Text>Geen apparaten in de buurt gevonden</Text>
                     )}
                 </View>
