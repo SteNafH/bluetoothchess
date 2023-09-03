@@ -1,6 +1,10 @@
 import React from "react";
 import { BluetoothContext } from "../contexts/BluetoothContext";
 
-export function useBluetooth() {
+function useBluetooth() {
     return React.useContext(BluetoothContext);
 }
+
+export {
+    useBluetooth
+};
