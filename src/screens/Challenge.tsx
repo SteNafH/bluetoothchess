@@ -91,11 +91,11 @@ const styles = StyleSheet.create({
         flexGrow: 1
     },
     scrollView: {
-        paddingHorizontal: 20,
-        flexGrow: 1
+        padding: 20,
+        flexGrow: 1,
+        gap: 20
     },
     timeControlContainer: {
-        marginTop: 20,
         display: "flex",
         flexDirection: "column",
         gap: 10
@@ -130,7 +130,6 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
     },
     colorPickContainer: {
-        marginTop: 20,
         borderBottomWidth: 1,
         borderTopWidth: 1,
         borderColor: "#252422",

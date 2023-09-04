@@ -158,13 +158,13 @@ function DeviceList() {
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollView}>
-                <View>
-                    <View style={styles.inputContainer}>
-                        <MagnifyingGlassIcon width={20} height={20} color={"#BEBEBE"} />
-                        <TextInput onChangeText={setSearch} value={search} placeholder={"Zoek apparaat"}
-                                   style={styles.input} placeholderTextColor={"#858482"} />
-                    </View>
+                <View style={styles.inputContainer}>
+                    <MagnifyingGlassIcon width={20} height={20} color={"#BEBEBE"} />
+                    <TextInput onChangeText={setSearch} value={search} placeholder={"Zoek apparaat"}
+                               style={styles.input} placeholderTextColor={"#858482"} />
+                </View>
 
+                <View>
                     <View style={styles.header}>
                         <Text style={styles.headerText}>Verbonden apparaten</Text>
                         <Text style={styles.headerSectionCount}>{connectedDevices.size}</Text>
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     scrollView: {
-        paddingHorizontal: 20,
+        padding: 20,
         flexGrow: 1,
         gap: 20
     },
@@ -253,7 +253,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#464241",
         paddingHorizontal: 10,
         borderRadius: 10,
-        marginVertical: 10
     },
     input: {
         color: "#BEBEBE",
