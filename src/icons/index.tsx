@@ -10,6 +10,10 @@ import MobileIcon from './mobile.svg';
 import QuestionIcon from './question.svg';
 import RotateIcon from './rotate.svg';
 import SpinnerIcon from './spinner.svg';
+import BulletIcon from './bullet.svg';
+import BlitzIcon from './blitz.svg';
+import RapidIcon from './rapid.svg';
+import KingIcon from './king.svg';
 
 export {
     ChallengeIcon,
@@ -23,5 +27,9 @@ export {
     MobileIcon,
     QuestionIcon,
     RotateIcon,
-    SpinnerIcon
+    SpinnerIcon,
+    BulletIcon,
+    BlitzIcon,
+    RapidIcon,
+    KingIcon,
 }
