@@ -12,7 +12,7 @@ import Challenge from "./screens/Challenge";
 export type RootStackParamList = {
     Home: undefined;
     Challenge: { device: BluetoothNativeDevice };
-    Device: { device: BluetoothNativeDevice };
+    Device: { device: BluetoothNativeDevice, color: boolean | undefined, timeControl: string };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -32,11 +32,11 @@ function App() {
                     },
                     cardStyle: {
                         backgroundColor: "#312D2A"
-                    },
+                    }
                 }}
                 >
                     <Stack.Screen name="Home" options={{ title: "Apparaten" }} component={DeviceList} />
-                    <Stack.Screen name="Challenge" options={{ title: "Uitdaging" }} component={Challenge}/>
+                    <Stack.Screen name="Challenge" options={{ title: "Uitdaging" }} component={Challenge} />
                     <Stack.Screen name="Device" component={Chat} />
                 </Stack.Navigator>
             </NavigationContainer>

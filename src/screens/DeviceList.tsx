@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
     Animated, Easing,
-    PermissionsAndroid, Pressable,
+    PermissionsAndroid, TouchableOpacity,
     SafeAreaView, ScrollView,
     StyleSheet,
     Text,
@@ -199,11 +199,11 @@ function DeviceList() {
                         <Text style={styles.headerText}>Apparaten in de buurt</Text>
                         <Text style={styles.headerSectionCount}>{discoveredDevices.size}</Text>
 
-                        <Pressable onPress={getNewDevices} style={styles.discoverButton}>
+                        <TouchableOpacity onPress={getNewDevices} style={styles.discoverButton}>
                             <Animated.View style={{ transform: [{ rotate: spin }] }}>
                                 <SpinnerIcon width={20} height={20} color={"#FFFFFF"} />
                             </Animated.View>
-                        </Pressable>
+                        </TouchableOpacity>
                     </View>
 
                     {filteredDiscoveredDevices.map((device, index) => (
@@ -238,7 +238,7 @@ function DeviceInList({ device, showSeparator, handleDevice }: DeviceInListProps
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
+        flexGrow: 1
     },
     scrollView: {
         padding: 20,
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
         gap: 5,
         backgroundColor: "#464241",
         paddingHorizontal: 10,
-        borderRadius: 10,
+        borderRadius: 10
     },
     input: {
         color: "#BEBEBE",

@@ -46,9 +46,8 @@ function Chat({ route }: StackScreenProps<RootStackParamList, "Device">) {
         }
 
         async function disconnect() {
-            if (connection) {
+            if (connection)
                 await device.disconnect();
-            }
 
             uninitializeRead();
         }

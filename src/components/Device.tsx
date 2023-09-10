@@ -1,6 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import DeviceIcon from "./DeviceIcon";
 import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import DeviceIcon from "./DeviceIcon";
 import { BluetoothDevice } from "react-native-bluetooth-classic";
 import { ChallengeIcon } from "../icons";
 
@@ -26,9 +26,9 @@ function Device({ device, onChallenge }: DeviceProps) {
                 <Text style={styles.deviceAddress}>{device.address}</Text>
             </View>
             <View style={styles.deviceChallengeContainer}>
-                <Pressable onPress={handleChallenge} style={styles.deviceChallenge}>
+                <TouchableOpacity onPress={handleChallenge} style={styles.deviceChallenge}>
                     <ChallengeIcon width={30} height={30} color={"#FFFFFF"} />
-                </Pressable>
+                </TouchableOpacity>
             </View>
         </View>
     );
