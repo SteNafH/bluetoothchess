@@ -20,7 +20,7 @@ function Challenge({ route }: StackScreenProps<RootStackParamList, "Challenge">)
     }
 
     function handlePlay() {
-        navigation.navigate("Device", { device: route.params.device, color, timeControl });
+        navigation.navigate("Game", { device: route.params.device, color, timeControl });
     }
 
     return (
