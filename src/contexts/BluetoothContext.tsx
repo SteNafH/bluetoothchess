@@ -58,7 +58,7 @@ export function BluetoothProvider({ children }: { children: React.ReactNode }) {
                 </View>
             </Modal>
 
-            {bluetoothEnabled === undefined ? null : children}
+            {bluetoothEnabled && children}
         </BluetoothContext.Provider>
     );
 }
